@@ -1,3 +1,5 @@
+#define PDC_DLL_BUILD 1
+#define PDC_WIDE 1
 #ifdef _WIN32
 //Windows includes
 #include "curses.h"
@@ -7,23 +9,33 @@
 //Linux / MacOS includes
 #include <curses.h>
 #endif
+#include <cstdlib>
+#include <cstdio>
 #include <string>
-#include <sstream>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <locale>
+#include <codecvt>
 
 using namespace std;
 
-#define ctrl(x)           ((x) & 0x1f)
-
-void draw_centered(WINDOW* win, int max_y, int max_x, string text);
-
-int main(void)
+int main(int argc, char* argv[])
 {
+
+	cout << "Argument output: " << endl;
+	for (int i = 0; i < argc; i++)
+	{
+		cout << argv[i] << endl;
+	}
+
 	WINDOW* main_window = nullptr;
 	int num_cols = 0;
 	int num_rows = 0;
 
 	//SETUP
-	//initialize our window
+
+	//initialize our screen
 	main_window = initscr();
 
 	//resize our window
@@ -31,57 +43,181 @@ int main(void)
 	getmaxyx(main_window, num_rows, num_cols);
 	resize_term(num_rows - 1, num_cols - 1);
 	getmaxyx(main_window, num_rows, num_cols);
+	attron(A_DIM);
+	wborder(main_window, 0, 0, 0, 0, 0, 0, 0, 0);
+	attroff(A_DIM);
 
-	//turn keyboard echo
+	//create text field
+	WINDOW* sub_window;
+	sub_window = subwin(main_window, num_rows - 2, num_cols - 2, 1, 1);
+
+
+	//Use to verify location of sub_window
+	//box(sub_window, 0, 0);
+
+	//turn off keyboard echo
 	noecho();
 
-	cbreak();
+	//allow scrolling
+	scrollok(sub_window, TRUE);
 
 	//turn on keypad input
-	keypad(main_window, TRUE);
+	keypad(main_window, true);
 
 	//hide the cursor
 	curs_set(FALSE);
+	wmove(sub_window, 0, 0);
+	wrefresh(sub_window);
 
 	//MAIN PROGRAM LOGIC GOES HERE
 
-	//pause for user input
-	bool keep_going = true;
-	while (keep_going == true)
+	//add file menu header to screen
+	if (has_colors() == FALSE)
 	{
-		//clear window
-		wclear(main_window);
+		endwin();
+		printf("Your terminal does not support color\n");
+		exit(1);
+	}
+	start_color(); /* Start color */
+	init_pair(1, COLOR_WHITE, COLOR_BLACK); //sets the color of text and background
 
-		ostringstream temp_str{};
-		temp_str << "width: " << num_cols << " height: " << num_rows;
-		draw_centered(main_window, num_rows, num_cols, temp_str.str().c_str());
-		refresh();
-		int input = wgetch(main_window);
+	wattron(main_window, COLOR_PAIR(1));
+	wattron(main_window, A_UNDERLINE);
+	mvaddstr(0, 2, "File");
+	mvaddstr(0, 8, "Edit");
+	mvaddstr(0, 14, "Options");
+	mvaddstr(0, 23, "Tools");
+	mvaddstr(0, 30, "About");
+	wattroff(main_window, A_UNDERLINE);
+	wattroff(main_window, COLOR_PAIR(1));
 
-		//Curses documentation says to use KEY_RESIZE, but you can also use
-		//is_termresized.  In real life, use either/or but not both.
-		if (is_termresized() == true)
+	//refresh tells curses to draw everything
+	refresh();
+	touchwin(stdscr);
+
+	//END OF PROGRAM LOGIC GOES HERE
+
+	//Pause for user input
+	attron(A_STANDOUT);
+	mvwaddstr(main_window, 2, (num_cols / 2) - 25, "INPUT ASTERICK * TO EXIT");
+	attroff(A_STANDOUT);
+
+	char typing = ' ';
+	int row_loc = 3;
+	int col_loc = 1;
+
+	//scrolling features
+	int maxy;
+	int maxx;
+	int i = 2;
+	getmaxyx(sub_window, maxy, maxx);
+
+	if (col_loc > num_cols - 2)
+	{
+		while (1)
 		{
-			resize_term(0, 0);
-			getmaxyx(main_window, num_rows, num_cols);
-		}
-		switch (input)
-		{
-		case ctrl('c'):
-			keep_going = false;
-		case KEY_RESIZE:
-			resize_term(0, 0);
-			getmaxyx(main_window, num_rows, num_cols);
+			wprintw(sub_window, "%d - this is a scrolling test!");
+			++i;
+			wrefresh(sub_window);
 		}
 	}
-	//end curses mode
-	endwin();
-}
 
-void draw_centered(WINDOW* win, int max_y, int max_x, string text)
-{
-	int length = text.length();
-	int left_margin = (max_x - length) / 2;
-	int top_margin = (max_y - 1) / 2;
-	mvwprintw(win, top_margin, left_margin, text.c_str());
+	vector<wstring> savefile;
+
+	//while typing any key but asterick, getch() will save value to type_input
+	//then it will be added to subwin as a char based on the current location of col_loc and
+	//row_loc, counter for column will then increment by one unless it's at the end of the 
+	//screen, then row_loc will increment by one and col_loc will revert to default location
+	while (typing != '*')
+	{
+		int type_input = getch();
+
+		if (type_input == 27)
+		{
+			//string filename = argv[1];
+			vector<wstring> myFile;
+			wifstream src;
+			src.open("Test.txt");
+			//src.open(filename);
+			wstring line;
+			//wstring newline;
+
+			while (!src.eof())
+			{
+
+				getline(src, line);
+				//std::wstring str_turned_to_wstr = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(line);
+				//std::string wstr_turned_to_str = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(newline);
+				//myFile.push_back(newline);
+				myFile.push_back(wstring{ line.begin(), line.end() });
+			}
+
+			src.close();
+
+			for (int i = 0; i < myFile.size(); i++)
+			{
+
+				//col_loc = sizeof(line) + col_loc;
+				mvwaddwstr(sub_window, col_loc, row_loc, myFile[i].c_str());
+				col_loc++;
+
+			}
+
+			for (int i = 0; i < myFile.size(); i++)
+			{
+				savefile.push_back(myFile[i]);
+			}
+
+
+			wrefresh(sub_window);
+		}
+
+		//if enter key is pressed, move to new line
+		if (type_input == 10)
+		{
+			row_loc++;
+			col_loc = 0;
+		}
+		else
+		{
+			mvwaddch(sub_window, row_loc, col_loc, type_input);
+			typing = type_input;
+			savefile.push_back(wstring{ (wchar_t)type_input });
+			wrefresh(sub_window);
+		}
+		if (col_loc >= num_cols - 20)
+		{
+			row_loc++;
+			col_loc = 0;
+		}
+		col_loc++;
+		if (type_input == '`')
+		{
+			wofstream outfile;
+			outfile.open("test2.txt");
+			for (int i = 0; i < savefile.size(); i++)
+			{
+				outfile << savefile[i];
+			}
+
+			outfile.close();
+
+		}
+	}
+
+	//user presses asterick to exit, subwindow clears, main window clears
+	//then both windows exit
+	if (typing == '*')
+	{
+		wclear(sub_window);
+		clear();
+		refresh();
+		wrefresh(sub_window);
+	}
+
+	wrefresh(sub_window);
+
+	//end curses mode, deletes both windows
+	delwin(sub_window);
+	endwin();
 }
