@@ -17,8 +17,14 @@
 #include <vector>
 #include <locale>
 #include <codecvt>
+#include <algorithm>
+#include <iterator>
+
 
 using namespace std;
+
+
+//int top = 0;
 
 int main(int argc, char* argv[])
 {
@@ -105,24 +111,23 @@ int main(int argc, char* argv[])
 	char typing = ' ';
 	int row_loc = 3;
 	int col_loc = 1;
+	int vertical_size = 0;
+	int horizontal_size = 0;
 
-	//scrolling features
-	int maxy;
-	int maxx;
-	int i = 2;
-	getmaxyx(sub_window, maxy, maxx);
+	vector<vector<char>> row_insert;
+	vector<char> col_insert;
 
-	if (col_loc > num_cols - 2)
+	for (int i = 0; i < num_cols - 2; i++)
 	{
-		while (1)
+		row_insert.push_back(vector<char>{});
+
+		for (int j = 0; j < num_rows - 2; j++)
 		{
-			wprintw(sub_window, "%d - this is a scrolling test!");
-			++i;
-			wrefresh(sub_window);
+			row_insert[i].push_back(char{});
 		}
 	}
 
-	vector<wstring> savefile;
+	int word_wrap = num_cols - 50;
 
 	//while typing any key but asterick, getch() will save value to type_input
 	//then it will be added to subwin as a char based on the current location of col_loc and
@@ -134,90 +139,110 @@ int main(int argc, char* argv[])
 
 		if (type_input == 27)
 		{
-			//string filename = argv[1];
-			vector<wstring> myFile;
-			wifstream src;
-			src.open("Test.txt");
-			//src.open(filename);
-			wstring line;
-			//wstring newline;
+			//vector<char> myFile;
+			ifstream srcfile;
+			srcfile.open("Test.txt");
+			char input_char;
 
-			while (!src.eof())
+			while (!srcfile.eof())
 			{
 
-				getline(src, line);
-				//std::wstring str_turned_to_wstr = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(line);
-				//std::string wstr_turned_to_str = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(newline);
-				//myFile.push_back(newline);
-				myFile.push_back(wstring{ line.begin(), line.end() });
+				srcfile.get(input_char);
+				col_insert.push_back(input_char);
+
+				if (input_char == '\n')
+				{
+					row_insert[row_loc] = col_insert;
+					col_insert.clear();
+					row_loc++;
+					col_loc = 1;
+				}
+
+				if (col_insert.size() >= word_wrap)
+				{
+					row_insert[row_loc] = col_insert;
+					col_insert.clear();
+					row_loc++;
+					col_loc = 1;
+				}
 			}
-
-			src.close();
-
-			for (int i = 0; i < myFile.size(); i++)
+			/*for (int i = 0; i < row_insert.size(); i++)
 			{
+				for (int j = 0; j < row_insert[i].size(); j++)
+				{
+					waddch(sub_window, row_insert[i][j]);
+					//mvwaddch(sub_window, row_loc, col_loc, row_insert[i][j]);
+				}
+			}*/
 
-				//col_loc = sizeof(line) + col_loc;
-				mvwaddwstr(sub_window, col_loc, row_loc, myFile[i].c_str());
-				col_loc++;
-
-			}
-
-			for (int i = 0; i < myFile.size(); i++)
-			{
-				savefile.push_back(myFile[i]);
-			}
-
-
+			srcfile.close();
 			wrefresh(sub_window);
 		}
 
 		//if enter key is pressed, move to new line
 		if (type_input == 10)
 		{
+			row_insert[row_loc] = col_insert;
+			col_insert.clear();
 			row_loc++;
-			col_loc = 0;
+			col_loc = 1;
+
+			//SCROLLING
+			/*if (row_insert.size() > num_rows - 20)
+			{
+				REQ_SCR_FLINE;
+			}*/
+			
 		}
 		else
 		{
 			mvwaddch(sub_window, row_loc, col_loc, type_input);
+			col_insert.push_back(type_input);
+			col_loc++;
 			typing = type_input;
-			savefile.push_back(wstring{ (wchar_t)type_input });
+			//row_insert[col_loc][row_loc] = col_insert;
 			wrefresh(sub_window);
 		}
-		if (col_loc >= num_cols - 20)
+		if (col_loc >= word_wrap)
 		{
+			row_insert[row_loc] = col_insert;
+			col_insert.clear();
 			row_loc++;
-			col_loc = 0;
+			col_loc = 1;
 		}
-		col_loc++;
 		if (type_input == '`')
 		{
-			wofstream outfile;
+			row_insert[row_loc] = col_insert;
+			col_insert.clear();
+			ofstream outfile;
 			outfile.open("test2.txt");
-			for (int i = 0; i < savefile.size(); i++)
+
+			//successfully writes row_insert to file, but has issues with formatting
+			for (int i = 0; i < row_insert.size(); i++)
 			{
-				outfile << savefile[i];
+				for (int j = 0; j < row_insert[i].size(); j++)
+				{
+					outfile << row_insert[i][j];
+				}
 			}
-
 			outfile.close();
-
 		}
-	}
 
-	//user presses asterick to exit, subwindow clears, main window clears
-	//then both windows exit
-	if (typing == '*')
-	{
-		wclear(sub_window);
-		clear();
-		refresh();
+		//user presses asterick to exit, subwindow clears, main window clears
+		//then both windows exit
+		if (typing == '*')
+		{
+			wclear(sub_window);
+			clear();
+			refresh();
+			wrefresh(sub_window);
+
+			//end curses mode, deletes both windows
+			delwin(sub_window);
+			endwin();
+		}
+
 		wrefresh(sub_window);
+
 	}
-
-	wrefresh(sub_window);
-
-	//end curses mode, deletes both windows
-	delwin(sub_window);
-	endwin();
 }
