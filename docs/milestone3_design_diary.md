@@ -17,3 +17,5 @@ Other information about my progress so far:
 -The "Save File" formatting really needs work. Writing a file to another file works fine, but if I try to save any user inputted text it strips out all line formatting and smushes everything together. 
 
 -Currently trying to figure out how to get backspace working
+
+Demo of functionality: docs/ms3-demo.gif
