@@ -5,6 +5,8 @@
 #include "curses.h"
 #include "panel.h"
 #include "curspriv.h"
+#include "Trie.h"
+#include "TrieNode.h"
 #else
 //Linux / MacOS includes
 #include <curses.h>
