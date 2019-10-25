@@ -27,6 +27,17 @@ public:
 	//TODO: implement
     void addWord(const string &word)
     {
+		TrieNode* runner = _root;
+
+		for (int i = 0; i < word.length(); i++)
+		{
+			if (runner->hasChild(word[i]) == false)
+			{
+				runner->setChild(word[i], new TrieNode(word[i]));
+			}
+			runner = runner->getChild(word[i]);
+		}
+		runner->setChild('$', runner);
     }
 
 	//TODO: implement
