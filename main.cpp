@@ -63,11 +63,36 @@ vector<char> col_insert;
 
 vector<char> trieCompare;
 
+Trie stuff;
+
 //system time
 const time_t ctt = time(0);
 
 int main(int argc, char* argv[])
 {
+	string word;
+	ifstream myfile;
+	myfile.open("keyword.txt");
+
+	if (myfile.good() == false)
+	{
+		string error = "File not found";
+		mvwaddstr(sub_window, 5, 10, error.c_str());
+	}
+
+	while (getline(myfile, word))
+	{
+		stuff.addWord(word);
+	}
+
+	vector<string> new_match = stuff.search("de");
+
+	for (int i = 0; i < new_match.size(); i++)
+	{
+		cout << new_match[i] << endl;
+	}
+
+	myfile.close();
 
 	displayWindows();
 
@@ -167,7 +192,7 @@ void displayWindows()
 void keyboard_input(char text)
 {
 
-	int word_wrap = num_cols - 50;
+	int word_wrap = num_cols - 100;
 
 	//while typing any key but asterick, getch() will save value to type_input
 	//then it will be added to subwin as a char based on the current location of col_loc and
@@ -201,12 +226,12 @@ void keyboard_input(char text)
 		else
 		{
 			mvwaddch(sub_window, row_loc, col_loc, type_input);
-
-			trieCompare.push_back(type_input);
 			if (text == 32)
 			{
 				trieCompare.clear();
 			}
+			trieCompare.push_back(type_input);
+			
 
 			col_insert.push_back(type_input);
 			col_loc++;
@@ -307,7 +332,8 @@ void saveFile()
 
 void callTrie()
 {
-	autocomplete = subwin(main_window, num_rows - 30, num_cols - 90, 5, 90);
+	//check panel
+	autocomplete = subwin(main_window, num_rows - 30, num_cols - 150, 5, 145);
 	box(autocomplete, 0, 0);
 
 	string compareWord;
@@ -317,7 +343,11 @@ void callTrie()
 		compareWord += trieCompare[i];
 	}
 
+	stuff.search(compareWord);
+
 	//cout << compareWord;
+
+	mvwaddstr(autocomplete, 1, 5, compareWord.c_str());
 
 	wrefresh(sub_window);
 	wrefresh(autocomplete);
