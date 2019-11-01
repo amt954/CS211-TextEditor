@@ -48,6 +48,7 @@ void callTrie();
 //Global variables
 WINDOW* main_window = nullptr;
 WINDOW* sub_window;
+WINDOW* autocomplete;
 
 //int top = 0;
 int row_loc = 3;
@@ -181,6 +182,11 @@ void keyboard_input(char text)
 			openFile();
 		}
 
+		if (type_input == '$')
+		{
+			callTrie();
+		}
+
 		//if enter key is pressed, move to new line
 		if (type_input == 10)
 		{
@@ -301,6 +307,9 @@ void saveFile()
 
 void callTrie()
 {
+	autocomplete = subwin(main_window, num_rows - 30, num_cols - 90, 5, 90);
+	box(autocomplete, 0, 0);
+
 	string compareWord;
 
 	for (int i = 0; i < trieCompare.size(); i++)
@@ -308,5 +317,16 @@ void callTrie()
 		compareWord += trieCompare[i];
 	}
 
-	cout << compareWord;
+	//cout << compareWord;
+
+	wrefresh(sub_window);
+	wrefresh(autocomplete);
 }
+
+/*Issues:
+
+1. How does search() work? (why does it need a vector? other people use bool instead?)
+2. Does my callTrie() function work similarly??
+3. why does my compareWord vector cut off the first letter of every word?
+4. How do a read through a file of words, add it to Trie and not have it come out a mess? (use GFG as reference)
+*/
