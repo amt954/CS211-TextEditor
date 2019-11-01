@@ -5,6 +5,8 @@
 #include "curses.h"
 #include "panel.h"
 #include "curspriv.h"
+#include "Trie.h"
+#include "TrieNode.h"
 #else
 //Linux / MacOS includes
 #include <curses.h>
@@ -40,6 +42,9 @@ void openFile();
 //Save information in vector (the screen) to a file
 void saveFile();
 
+//compares word in vector to TrieNode
+void callTrie();
+
 //Global variables
 WINDOW* main_window = nullptr;
 WINDOW* sub_window;
@@ -54,6 +59,8 @@ int num_rows = 0;
 
 vector<vector<char>> row_insert;
 vector<char> col_insert;
+
+vector<char> trieCompare;
 
 //system time
 const time_t ctt = time(0);
@@ -76,6 +83,8 @@ int main(int argc, char* argv[])
 	}
 
 	keyboard_input(typing);
+
+	callTrie();
 
 	wrefresh(sub_window);
 }
@@ -186,6 +195,13 @@ void keyboard_input(char text)
 		else
 		{
 			mvwaddch(sub_window, row_loc, col_loc, type_input);
+
+			trieCompare.push_back(type_input);
+			if (text == 32)
+			{
+				trieCompare.clear();
+			}
+
 			col_insert.push_back(type_input);
 			col_loc++;
 			text = type_input;
@@ -281,4 +297,16 @@ void saveFile()
 	//attron(A_STANDOUT);
 	mvwaddstr(main_window, 2, (num_cols / 2) + 40, saveTime.c_str());
 	//attroff(A_STANDOUT);
+}
+
+void callTrie()
+{
+	string compareWord;
+
+	for (int i = 0; i < trieCompare.size(); i++)
+	{
+		compareWord += trieCompare[i];
+	}
+
+	cout << compareWord;
 }
