@@ -49,3 +49,21 @@ public:
 };
 
 #endif // !TRIE_H
+
+/*// Returns true if key presents in trie, else false 
+bool search(struct TrieNode* root, const string key)
+{
+	int length = key.length();
+	struct TrieNode* pCrawl = root;
+	for (int level = 0; level < length; level++)
+	{
+		int index = CHAR_TO_INDEX(key[level]);
+
+		if (!pCrawl->children[index])
+			return false;
+
+		pCrawl = pCrawl->children[index];
+	}
+
+	return (pCrawl != NULL && pCrawl->isWordEnd);
+}*/
