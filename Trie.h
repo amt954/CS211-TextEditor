@@ -50,7 +50,11 @@ public:
 
 #endif // !TRIE_H
 
-/*// Returns true if key presents in trie, else false 
+/*REFERENCE:
+
+This is from GeeksforGeeks, works but can't figure out what it's doing
+
+// Returns true if key presents in trie, else false 
 bool search(struct TrieNode* root, const string key)
 {
 	int length = key.length();
