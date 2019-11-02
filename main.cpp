@@ -52,7 +52,7 @@ WINDOW* autocomplete;
 
 //int top = 0;
 int row_loc = 3;
-int col_loc = 1;
+int col_loc = 2;
 int vertical_size = 0;
 int horizontal_size = 0;
 int num_cols = 0;
@@ -63,16 +63,19 @@ vector<char> col_insert;
 
 vector<char> trieCompare;
 
-Trie stuff;
+Trie autocompleteList;
 
 //system time
 const time_t ctt = time(0);
 
 int main(int argc, char* argv[])
 {
+
+	displayWindows();
+
 	string word;
 	ifstream myfile;
-	myfile.open("keyword.txt");
+	myfile.open("keywords.txt");
 
 	if (myfile.good() == false)
 	{
@@ -82,19 +85,10 @@ int main(int argc, char* argv[])
 
 	while (getline(myfile, word))
 	{
-		stuff.addWord(word);
-	}
-
-	vector<string> new_match = stuff.search("de");
-
-	for (int i = 0; i < new_match.size(); i++)
-	{
-		cout << new_match[i] << endl;
+		autocompleteList.addWord(word);
 	}
 
 	myfile.close();
-
-	displayWindows();
 
 	char typing = ' ';
 
@@ -109,8 +103,6 @@ int main(int argc, char* argv[])
 	}
 
 	keyboard_input(typing);
-
-	callTrie();
 
 	wrefresh(sub_window);
 }
@@ -184,9 +176,10 @@ void displayWindows()
 
 
 	//Instructions for user
-	attron(A_STANDOUT);
-	mvwaddstr(main_window, 2, (num_cols / 2) - 25, "INPUT ASTERICK * TO EXIT");
-	attroff(A_STANDOUT);
+	attron(A_BOLD);
+	string instruct = "  ^X - EXIT  ^N - AUTO-COMPLETE  ^S - SAVE FILE   ^O - OPEN FILE";
+	mvwaddstr(main_window, 2, (num_cols / 2) - 45, instruct.c_str());
+	attroff(A_BOLD);
 }
 
 void keyboard_input(char text)
@@ -194,22 +187,23 @@ void keyboard_input(char text)
 
 	int word_wrap = num_cols - 100;
 
-	//while typing any key but asterick, getch() will save value to type_input
+	//while typing any key but CTRL X, getch() will save value to type_input
 	//then it will be added to subwin as a char based on the current location of col_loc and
 	//row_loc, counter for column will then increment by one unless it's at the end of the 
 	//screen, then row_loc will increment by one and col_loc will revert to default location
-	while (text != '*')
+	while (text != 24)
 	{
 		int type_input = getch();
 
-		if (type_input == 27)
+		if (type_input == 15) //CTRL O
 		{
 			openFile();
 		}
 
-		if (type_input == '$')
+		if (type_input == 14) // CTRL N
 		{
 			callTrie();
+			//wrefresh(autocomplete);
 		}
 
 		//if enter key is pressed, move to new line
@@ -219,14 +213,14 @@ void keyboard_input(char text)
 			newline();
 
 		}
-		else if (type_input == '`')
+		else if (type_input == 19) //CTRL S
 		{
 			saveFile();
 		}
 		else
 		{
 			mvwaddch(sub_window, row_loc, col_loc, type_input);
-			if (text == 32)
+			if (text == 32) //Space bar
 			{
 				trieCompare.clear();
 			}
@@ -246,9 +240,9 @@ void keyboard_input(char text)
 			wrefresh(sub_window);
 		}
 
-		//user presses asterick to exit, subwindow clears, main window clears
+		//user presses CTRL X to exit, subwindow clears, main window clears
 		//then both windows exit
-		if (text == '*')
+		if (text == 24) 
 		{
 			wclear(sub_window);
 			clear();
@@ -326,37 +320,45 @@ void saveFile()
 	string save = "File saved: ";
 	string saveTime = save + asctime(localtime(&ctt));
 	//attron(A_STANDOUT);
-	mvwaddstr(main_window, 2, (num_cols / 2) + 40, saveTime.c_str());
+	mvwaddstr(main_window, 4, (num_cols / 2) + 40, saveTime.c_str());
+	wrefresh(main_window);
 	//attroff(A_STANDOUT);
 }
 
 void callTrie()
 {
+	wclear(autocomplete);
 	//check panel
-	autocomplete = subwin(main_window, num_rows - 30, num_cols - 150, 5, 145);
+	autocomplete = subwin(main_window, num_rows - 30, num_cols - 125, 5, 120);
 	box(autocomplete, 0, 0);
+	wattron(autocomplete, A_STANDOUT);
+	mvwaddstr(autocomplete, 1, 15, "SUGGESTED WORDS:");
+	wattroff(autocomplete, A_STANDOUT);
+	int suggested_row_loc = row_loc;
 
 	string compareWord;
 
 	for (int i = 0; i < trieCompare.size(); i++)
 	{
-		compareWord += trieCompare[i];
+		compareWord += tolower(trieCompare[i]);
 	}
 
-	stuff.search(compareWord);
+	string suggestedWord;
+	vector<string> new_match = autocompleteList.search(compareWord);
 
-	//cout << compareWord;
+	for (int i = 0; i < new_match.size(); i++)
+	{
+		suggestedWord = to_string(i+1) + " - " + new_match[i];
+		mvwaddstr(autocomplete, suggested_row_loc, 2, suggestedWord.c_str());
+		suggested_row_loc++;
+	}
 
-	mvwaddstr(autocomplete, 1, 5, compareWord.c_str());
+	if (new_match.size() <= 0)
+	{
+		suggestedWord = "NO MATCHES FOUND";
+		mvwaddstr(autocomplete, 4, 15, suggestedWord.c_str());
+	}
 
 	wrefresh(sub_window);
 	wrefresh(autocomplete);
 }
-
-/*Issues:
-
-1. How does search() work? (why does it need a vector? other people use bool instead?)
-2. Does my callTrie() function work similarly??
-3. why does my compareWord vector cut off the first letter of every word?
-4. How do a read through a file of words, add it to Trie and not have it come out a mess? (use GFG as reference)
-*/
