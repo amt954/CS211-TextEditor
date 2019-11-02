@@ -55,3 +55,17 @@ Add Element to 2d vector:
 1) https://stackoverflow.com/questions/27241177/inserting-elements-into-2d-vector
 
 2) https://stackoverflow.com/questions/2624232/how-to-change-a-particular-element-of-a-c-stl-vector
+
+ASCII Table for Non-Printing characters (i.e.: CTRL+Something)
+
+1) http://www.physics.udel.edu/~watson/scen103/ascii.html
+
+2) https://en.cppreference.com/w/cpp/language/ascii
+
+Trie info:
+
+1) https://medium.com/@dookpham/predictive-text-autocomplete-using-a-trie-prefix-tree-data-structure-in-javascript-part-1-6ff7fa83c74b
+
+2) https://www.geeksforgeeks.org/auto-complete-feature-using-trie/ (useful for reverse-engineering Trie to attempt to understand how it works)
+
+3) http://www.mathcs.emory.edu/~cheung/Courses/323/Syllabus/Text/trie01.html
