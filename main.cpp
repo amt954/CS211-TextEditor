@@ -7,7 +7,7 @@
 #include "curspriv.h"
 #include "Trie.h"
 #include "TrieNode.h"
-//#include "binary.h"
+#include "binary.h"
 #else
 //Linux / MacOS includes
 #include <curses.h>
@@ -308,6 +308,7 @@ void openFile()
 void saveFile()
 {
 	row_insert[row_loc] = col_insert;
+	findFrequency(col_insert);
 	col_insert.clear();
 	ofstream outfile;
 	outfile.open("test2.txt");
@@ -328,10 +329,6 @@ void saveFile()
 	mvwaddstr(main_window, 4, (num_cols / 2) + 40, saveTime.c_str());
 	wrefresh(main_window);
 	//attroff(A_STANDOUT);
-
-	copy(row_insert.begin(), row_insert.end(), saveToBinary.begin());
-
-	findFrequency(saveToBinary);
 }
 
 void callTrie()
