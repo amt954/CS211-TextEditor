@@ -7,6 +7,7 @@
 #include "curspriv.h"
 #include "Trie.h"
 #include "TrieNode.h"
+//#include "binary.h"
 #else
 //Linux / MacOS includes
 #include <curses.h>
@@ -65,6 +66,7 @@ vector<char> col_insert;
 
 vector<char> trieCompare;
 vector<string> new_match;
+vector<string> saveToBinary;
 
 Trie autocompleteList;
 
@@ -326,6 +328,10 @@ void saveFile()
 	mvwaddstr(main_window, 4, (num_cols / 2) + 40, saveTime.c_str());
 	wrefresh(main_window);
 	//attroff(A_STANDOUT);
+
+	copy(row_insert.begin(), row_insert.end(), saveToBinary.begin());
+
+	findFrequency(saveToBinary);
 }
 
 void callTrie()
@@ -367,3 +373,4 @@ void callTrie()
 	wrefresh(sub_window);
 	wrefresh(autocomplete);
 }
+
