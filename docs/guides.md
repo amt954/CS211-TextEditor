@@ -69,3 +69,13 @@ Trie info:
 2) https://www.geeksforgeeks.org/auto-complete-feature-using-trie/ (useful for reverse-engineering Trie to attempt to understand how it works)
 
 3) http://www.mathcs.emory.edu/~cheung/Courses/323/Syllabus/Text/trie01.html
+
+Heaps and Priority Queues:
+
+1) https://www.fluentcpp.com/2018/03/13/heaps-priority-queues-stl-part-1/
+
+2) https://www.tutorialspoint.com/cplusplus-program-to-implement-max-heap
+
+3) https://www.sanfoundry.com/cpp-program-implement-max-heap/
+
+4) https://www2.hawaii.edu/~esb/2011spring.ics211/apr07.html
