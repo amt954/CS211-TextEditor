@@ -29,3 +29,7 @@ The things that still need work that I can do if I complete Milestone #6 early:
 -get backspace to work
 -get arrow keys working
 -fix the resize feature so it stops breaking everything
+
+
+
+EDIT: forgot to add link to demo gif - https://github.com/amt954/CS211-TextEditor/blob/Experimental/docs/ms5-demo.gif
