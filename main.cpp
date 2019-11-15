@@ -275,7 +275,7 @@ void openFile()
 
 	//vector<char> myFile;
 	ifstream srcfile;
-	srcfile.open("Test.txt");
+	srcfile.open("test.txt");
 	char input_char;
 
 	while (!srcfile.eof())
@@ -286,6 +286,7 @@ void openFile()
 
 		if (input_char == '\n')
 		{
+			/*findFrequency(col_insert);*/
 			row_insert[row_loc] = col_insert;
 			col_insert.clear();
 			row_loc++;
@@ -294,6 +295,7 @@ void openFile()
 
 		if (col_insert.size() >= word_wrap)
 		{
+			/*findFrequency(col_insert);*/
 			row_insert[row_loc] = col_insert;
 			col_insert.clear();
 			row_loc++;
@@ -309,7 +311,9 @@ void saveFile()
 {
 	row_insert[row_loc] = col_insert;
 	findFrequency(col_insert);
+	saveFrequency(col_insert);
 	col_insert.clear();
+	vector<char> testing;
 	ofstream outfile;
 	outfile.open("test2.txt");
 
