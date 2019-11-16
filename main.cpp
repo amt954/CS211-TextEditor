@@ -231,8 +231,7 @@ void keyboard_input(char text)
 				trieCompare.clear();
 			}
 			trieCompare.push_back(type_input);
-			
-
+		
 			col_insert.push_back(type_input);
 			binary.push_back(type_input);
 			col_loc++;
@@ -284,12 +283,12 @@ void openFile()
 	{
 		srcfile.get(input_char);
 		col_insert.push_back(input_char);
-		binary.push_back(input_char);
 
 		if (input_char == '\n' || col_insert.size() >= word_wrap)
 		{
 			for (int i = 0; i < col_insert.size(); i++)
 			{
+				binary.push_back(col_insert[i]);
 				mvwaddch(sub_window, row_loc, col_loc, col_insert[i]);
 				col_loc++;
 			}

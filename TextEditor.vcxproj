@@ -142,6 +142,8 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="binaryfile.txt" />
+    <Text Include="binarymap.txt" />
     <Text Include="keywords.txt" />
     <Text Include="test.txt" />
     <Text Include="test2.txt" />

@@ -20,9 +20,11 @@ priority_queue< pair<char, int>, vector<pair<char, int>>, MaxHeapPairComparer> m
 
 string inttoBinary(int someNum);
 
+unordered_map<char, int> countMap;
+unordered_map<char, string> switchToBinary;
+
 void findFrequency(vector <char> vecOfStrings)
 {
-	unordered_map<char, int> countMap;
 
 	//Iterate over the vector and store the frequency of each element in map
 	for (auto& elem : vecOfStrings)
@@ -44,9 +46,9 @@ void findFrequency(vector <char> vecOfStrings)
 	for (auto& elem : countMap)
 	{
 		max_pq.push(make_pair(elem.first, elem.second));
-		//cout << elem.first << ": " << elem.second << endl;
-		//cout << endl;
-		binarymapfile << elem.first << ": " << " (" << elem.second << ") " << inttoBinary(count) << endl;
+		string binaryFrequency = inttoBinary(count);
+		binarymapfile << elem.first << ": " << " (" << elem.second << ") " << binaryFrequency << endl;
+		switchToBinary.insert(make_pair(elem.first, binaryFrequency));
 		count++;
 	}
 
@@ -55,36 +57,34 @@ void findFrequency(vector <char> vecOfStrings)
 
 void saveFrequency(vector <char> vecOfStrings)
 {
-	unordered_map<char, int> countMap;
-
-	//Iterate over the vector and store the frequency of each element in map
-	for (auto& elem : vecOfStrings)
-	{
-		if (elem > 0 && isalpha(elem))
-		{
-			elem = tolower(elem);
-			auto result = countMap.insert(pair<char, int>(elem, 1));
-			if (result.second == false)
-				result.first->second++;
-		}
-	}
+	unordered_map<char, string>::iterator it;
 
 	ofstream binaryfile;
 	binaryfile.open("binaryfile.txt");
-	int count = 1;
 
-	// Iterate over the map
-	for (auto& elem : countMap)
+	for (int i = 0; i < vecOfStrings.size(); i++)
 	{
-		max_pq.push(make_pair(elem.first, elem.second));
-		//cout << elem.first << ": " << elem.second << endl;
-		//cout << endl;
-		binaryfile << inttoBinary(count);
-		count++;
+		if (vecOfStrings[i] == ' ')
+		{
+			binaryfile << " ";
+		}
+		else
+		{
+			it = switchToBinary.find(vecOfStrings[i]);
+			if (it != switchToBinary.end())
+			{
+				binaryfile << it->second;
+			}
+			else
+			{
+				break;
+			}
+		}
 	}
 
 	binaryfile.close();
 }
+
 
 string inttoBinary(int someNum)
 {

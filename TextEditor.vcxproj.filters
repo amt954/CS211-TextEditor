@@ -62,5 +62,11 @@
     <Text Include="keywords.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="binarymap.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="binaryfile.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
