@@ -63,6 +63,7 @@ string chosenWord;
 
 vector<vector<char>> row_insert;
 vector<char> col_insert;
+vector<char> binary;
 
 vector<char> trieCompare;
 vector<string> new_match;
@@ -233,6 +234,7 @@ void keyboard_input(char text)
 			
 
 			col_insert.push_back(type_input);
+			binary.push_back(type_input);
 			col_loc++;
 			text = type_input;
 			if (col_loc >= word_wrap)
@@ -280,22 +282,17 @@ void openFile()
 
 	while (!srcfile.eof())
 	{
-
 		srcfile.get(input_char);
 		col_insert.push_back(input_char);
+		binary.push_back(input_char);
 
-		if (input_char == '\n')
+		if (input_char == '\n' || col_insert.size() >= word_wrap)
 		{
-			/*findFrequency(col_insert);*/
-			row_insert[row_loc] = col_insert;
-			col_insert.clear();
-			row_loc++;
-			col_loc = 1;
-		}
-
-		if (col_insert.size() >= word_wrap)
-		{
-			/*findFrequency(col_insert);*/
+			for (int i = 0; i < col_insert.size(); i++)
+			{
+				mvwaddch(sub_window, row_loc, col_loc, col_insert[i]);
+				col_loc++;
+			}
 			row_insert[row_loc] = col_insert;
 			col_insert.clear();
 			row_loc++;
@@ -310,8 +307,8 @@ void openFile()
 void saveFile()
 {
 	row_insert[row_loc] = col_insert;
-	findFrequency(col_insert);
-	saveFrequency(col_insert);
+	findFrequency(binary);
+	saveFrequency(binary);
 	col_insert.clear();
 	vector<char> testing;
 	ofstream outfile;
@@ -374,4 +371,3 @@ void callTrie()
 	wrefresh(sub_window);
 	wrefresh(autocomplete);
 }
-
