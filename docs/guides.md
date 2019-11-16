@@ -79,3 +79,19 @@ Heaps and Priority Queues:
 3) https://www.sanfoundry.com/cpp-program-implement-max-heap/
 
 4) https://www2.hawaii.edu/~esb/2011spring.ics211/apr07.html
+
+Searching through Unordered_Maps (to match item with key)
+
+1) http://www.enseignement.polytechnique.fr/informatique/INF478/docs/Cpp/en/cpp/container/unordered_map/find.html
+
+2) https://thispointer.com/how-to-find-an-element-in-unordered_map/
+
+3) https://www.geeksforgeeks.org/unordered_map-find-in-c-stl/
+
+4) https://www.geeksforgeeks.org/unordered_map-in-cpp-stl/
+
+Word frequency counter
+
+1) https://codereview.stackexchange.com/questions/173382/sorting-elements-according-to-frequency-of-occurence-in-c
+
+2) https://stackoverflow.com/questions/2488941/find-which-numbers-appears-most-in-a-vector
