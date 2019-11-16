@@ -7,6 +7,7 @@
 #include "curspriv.h"
 #include "Trie.h"
 #include "TrieNode.h"
+#include "binary.h"
 #else
 //Linux / MacOS includes
 #include <curses.h>
@@ -57,11 +58,15 @@ int vertical_size = 0;
 int horizontal_size = 0;
 int num_cols = 0;
 int num_rows = 0;
+int suggestCount;
+string chosenWord;
 
 vector<vector<char>> row_insert;
 vector<char> col_insert;
 
 vector<char> trieCompare;
+vector<string> new_match;
+vector<string> saveToBinary;
 
 Trie autocompleteList;
 
@@ -270,7 +275,7 @@ void openFile()
 
 	//vector<char> myFile;
 	ifstream srcfile;
-	srcfile.open("Test.txt");
+	srcfile.open("test.txt");
 	char input_char;
 
 	while (!srcfile.eof())
@@ -281,6 +286,7 @@ void openFile()
 
 		if (input_char == '\n')
 		{
+			/*findFrequency(col_insert);*/
 			row_insert[row_loc] = col_insert;
 			col_insert.clear();
 			row_loc++;
@@ -289,6 +295,7 @@ void openFile()
 
 		if (col_insert.size() >= word_wrap)
 		{
+			/*findFrequency(col_insert);*/
 			row_insert[row_loc] = col_insert;
 			col_insert.clear();
 			row_loc++;
@@ -303,7 +310,10 @@ void openFile()
 void saveFile()
 {
 	row_insert[row_loc] = col_insert;
+	findFrequency(col_insert);
+	saveFrequency(col_insert);
 	col_insert.clear();
+	vector<char> testing;
 	ofstream outfile;
 	outfile.open("test2.txt");
 
@@ -327,8 +337,9 @@ void saveFile()
 
 void callTrie()
 {
+	//clear any previous versions of auto-complete window
 	wclear(autocomplete);
-	//check panel
+	
 	autocomplete = subwin(main_window, num_rows - 30, num_cols - 125, 5, 120);
 	box(autocomplete, 0, 0);
 	wattron(autocomplete, A_STANDOUT);
@@ -340,14 +351,15 @@ void callTrie()
 
 	for (int i = 0; i < trieCompare.size(); i++)
 	{
-		compareWord += tolower(trieCompare[i]);
+		compareWord += tolower(trieCompare[i]); //add word currently being typed to string to use for searching Trie
 	}
 
 	string suggestedWord;
-	vector<string> new_match = autocompleteList.search(compareWord);
+	new_match = autocompleteList.search(compareWord);
 
 	for (int i = 0; i < new_match.size(); i++)
 	{
+		suggestCount = i;
 		suggestedWord = to_string(i+1) + " - " + new_match[i];
 		mvwaddstr(autocomplete, suggested_row_loc, 2, suggestedWord.c_str());
 		suggested_row_loc++;
@@ -362,3 +374,4 @@ void callTrie()
 	wrefresh(sub_window);
 	wrefresh(autocomplete);
 }
+
