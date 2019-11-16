@@ -45,7 +45,7 @@ void findFrequency(vector <char> vecOfStrings)
 	{
 		max_pq.push(make_pair(elem.first, elem.second));
 		//cout << elem.first << ": " << elem.second << endl;
-		cout << endl;
+		//cout << endl;
 		binarymapfile << elem.first << ": " << " (" << elem.second << ") " << inttoBinary(count) << endl;
 		count++;
 	}
@@ -78,7 +78,7 @@ void saveFrequency(vector <char> vecOfStrings)
 	{
 		max_pq.push(make_pair(elem.first, elem.second));
 		//cout << elem.first << ": " << elem.second << endl;
-		cout << endl;
+		//cout << endl;
 		binaryfile << inttoBinary(count);
 		count++;
 	}
