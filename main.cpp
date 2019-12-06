@@ -47,7 +47,10 @@ void saveFile();
 //compares word in vector to TrieNode
 void callTrie();
 
-void printSorted();
+void printInsertSort();
+void printQuickSort();
+void printSelectSort();
+void printBubbleSort();
 
 //Global variables
 WINDOW* main_window = nullptr;
@@ -213,7 +216,15 @@ void keyboard_input(char text)
 		if (type_input == 14) // CTRL N
 		{
 			callTrie();
-			//wrefresh(autocomplete);
+		}
+
+		if (type_input == 20) //CTRL T
+		{
+			//printBubbleSort();
+			printInsertSort();
+			forSorting.clear();
+			//printQuickSort();
+			//printSelectSort();
 		}
 
 		//if enter key is pressed, move to new line
@@ -226,30 +237,25 @@ void keyboard_input(char text)
 		else if (type_input == 19) //CTRL S
 		{
 			saveFile();
-			printSorted();
 
 		}
 		else
 		{
+			string temp;
 			mvwaddch(sub_window, row_loc, col_loc, type_input);
 			if (text == 32) //Space bar
 			{
-				string temp;
-				for (int i = 0; i < trieCompare.size(); i++)
-				{
-					temp += trieCompare[i];
-				}
-				forSorting.push_back(temp);
 				trieCompare.clear();
 			}
 			trieCompare.push_back(type_input);
-		
+					
 			col_insert.push_back(type_input);
 			binary.push_back(type_input);
 			col_loc++;
 			text = type_input;
 			if (col_loc >= word_wrap)
 			{
+
 				row_insert[row_loc] = col_insert;
 				col_insert.clear();
 				row_loc++;
@@ -383,12 +389,134 @@ void callTrie()
 	wrefresh(autocomplete);
 }
 
-void printSorted()
+void printQuickSort()
 {
+	string temp;
+	for (int i = 0; i < col_insert.size(); i++)
+	{
+			temp += col_insert[i];
+			if (col_insert[i] == ' ')
+			{
+				forSorting.push_back(temp);
+				temp = "";
+			}
+	}
+
+	temp += " ";
+
+	forSorting.push_back(temp);
+
 	Quicksort(forSorting);
+
+	col_loc = 2;
+	row_loc += 2;
+
+	mvwaddstr(sub_window, row_loc, col_loc, "QUICK SORT:");
+
+	row_loc++;
 
 	for (int i = 0; i < forSorting.size(); i++)
 	{
 		mvwaddstr(sub_window, row_loc, col_loc, forSorting[i].c_str());
+		col_loc += forSorting[i].length();
+	}
+}
+
+void printSelectSort()
+{
+	string temp;
+	for (int i = 0; i < col_insert.size(); i++)
+	{
+		temp += col_insert[i];
+		if (col_insert[i] == ' ')
+		{
+			forSorting.push_back(temp);
+			temp = "";
+		}
+	}
+
+	temp += " ";
+
+	forSorting.push_back(temp);
+
+	Selectsort(forSorting);
+
+	col_loc = 2;
+	row_loc += 2;
+
+	mvwaddstr(sub_window, row_loc, col_loc, "SELECTION SORT:");
+
+	row_loc++;
+
+	for (int i = 0; i < forSorting.size(); i++)
+	{
+		mvwaddstr(sub_window, row_loc, col_loc, forSorting[i].c_str());
+		col_loc += forSorting[i].length();
+	}
+}
+
+void printBubbleSort()
+{
+	string temp;
+	for (int i = 0; i < col_insert.size(); i++)
+	{
+		temp += col_insert[i];
+		if (col_insert[i] == ' ')
+		{
+			forSorting.push_back(temp);
+			temp = "";
+		}
+	}
+
+	temp += " ";
+
+	forSorting.push_back(temp);
+
+	BubbleSort(forSorting);
+
+	col_loc = 2;
+	row_loc += 2;
+
+	mvwaddstr(sub_window, row_loc, col_loc, "BUBBLE SORT:");
+
+	row_loc++;
+
+	for (int i = 0; i < forSorting.size(); i++)
+	{
+		mvwaddstr(sub_window, row_loc, col_loc, forSorting[i].c_str());
+		col_loc += forSorting[i].length();
+	}
+}
+
+void printInsertSort()
+{
+	string temp;
+	for (int i = 0; i < col_insert.size(); i++)
+	{
+		temp += col_insert[i];
+		if (col_insert[i] == ' ')
+		{
+			forSorting.push_back(temp);
+			temp = "";
+		}
+	}
+
+	temp += " ";
+
+	forSorting.push_back(temp);
+	
+	InsertionSort(forSorting);
+
+	col_loc = 2;
+	row_loc += 2;
+
+	mvwaddstr(sub_window, row_loc, col_loc, "INSERTION SORT:");
+
+	row_loc++;
+
+	for (int i = 0; i < forSorting.size(); i++)
+	{
+		mvwaddstr(sub_window, row_loc, col_loc, forSorting[i].c_str());
+		col_loc += forSorting[i].length();
 	}
 }

@@ -128,6 +128,7 @@
     <ClInclude Include="BubbleSort.h" />
     <ClInclude Include="curses.h" />
     <ClInclude Include="curspriv.h" />
+    <ClInclude Include="Display.h" />
     <ClInclude Include="InsertionSort.h" />
     <ClInclude Include="MergeSort.h" />
     <ClInclude Include="panel.h" />

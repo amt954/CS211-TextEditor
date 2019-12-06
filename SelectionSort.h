@@ -3,7 +3,7 @@
 
 template <typename T>
 
-void sort(vector<T>& data)
+void Selectsort(vector<T>& data)
 {
 	for (int i = 0; i < data.size(); i++)
 	{
