@@ -8,6 +8,7 @@
 #include "Trie.h"
 #include "TrieNode.h"
 #include "binary.h"
+#include "Sorts.h"
 #else
 //Linux / MacOS includes
 #include <curses.h>
@@ -46,6 +47,8 @@ void saveFile();
 //compares word in vector to TrieNode
 void callTrie();
 
+void printSorted();
+
 //Global variables
 WINDOW* main_window = nullptr;
 WINDOW* sub_window;
@@ -68,6 +71,7 @@ vector<char> binary;
 vector<char> trieCompare;
 vector<string> new_match;
 vector<string> saveToBinary;
+vector<string> forSorting;
 
 Trie autocompleteList;
 
@@ -222,12 +226,20 @@ void keyboard_input(char text)
 		else if (type_input == 19) //CTRL S
 		{
 			saveFile();
+			printSorted();
+
 		}
 		else
 		{
 			mvwaddch(sub_window, row_loc, col_loc, type_input);
 			if (text == 32) //Space bar
 			{
+				string temp;
+				for (int i = 0; i < trieCompare.size(); i++)
+				{
+					temp += trieCompare[i];
+				}
+				forSorting.push_back(temp);
 				trieCompare.clear();
 			}
 			trieCompare.push_back(type_input);
@@ -369,4 +381,14 @@ void callTrie()
 
 	wrefresh(sub_window);
 	wrefresh(autocomplete);
+}
+
+void printSorted()
+{
+	Quicksort(forSorting);
+
+	for (int i = 0; i < forSorting.size(); i++)
+	{
+		mvwaddstr(sub_window, row_loc, col_loc, forSorting[i].c_str());
+	}
 }
