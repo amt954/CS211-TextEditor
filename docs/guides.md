@@ -95,3 +95,7 @@ Word frequency counter
 1) https://codereview.stackexchange.com/questions/173382/sorting-elements-according-to-frequency-of-occurence-in-c
 
 2) https://stackoverflow.com/questions/2488941/find-which-numbers-appears-most-in-a-vector
+
+
+Milestone 7:
+Although I googled a lot of things for milestone 7, I didn't come across anything interesting that isn't already on this list
