@@ -11,3 +11,5 @@ And so on.
 Despite all this, I did eventually manage to get the sorting algorithms to work and in a way that users would want to use it, which is a wonderful feeling. Yeah, it feels like my program is simply a bunch of functions glued together that'll fall apart the minute I add one too many things, BUT it works. For now. Which is all I ask.
 
 I'm really looking forward to re-doing this project later on though considering I have a end-goal in mind which means I can think more long-term and plan/design/program with that in mind rather than one step at a time. Not to say that the step by step process didn't work, just that while I was thinking of short-term goals I didn't really take the time to care about the overall design/programmer friendliness of the code because if it works, it works. So I think it'll be fun to go back and redesign what I already have and see where it turns up. 
+
+Edit: https://raw.githubusercontent.com/amt954/CS211-TextEditor/master/docs/ms7-demo.gif
